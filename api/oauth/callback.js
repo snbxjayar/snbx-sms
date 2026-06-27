@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { setLocation } = require("../../lib/firebase");
- 
+
 module.exports = async (req, res) => {
   const { code } = req.query;
   if (!code) return res.status(400).send("Missing code.");
@@ -16,18 +16,22 @@ module.exports = async (req, res) => {
       }),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
-    console.log("[OAuth] GHL response:", JSON.stringify(r.data));
-    const { access_token, refresh_token, expires_in, locationId } = r.data;
-    await setLocation(locationId, {
-      access_token, refresh_token, expires_in, locationId,
+    console.log("[OAuth] GHL response keys:", Object.keys(r.data));
+    const { access_token, refresh_token, expires_in, locationId, companyId, userId } = r.data;
+    const locId = locationId || companyId || userId;
+    await setLocation(locId, {
+      access_token, refresh_token, expires_in,
+      locationId: locId,
+      companyId: companyId || null,
+      tokenType: locationId ? "location" : "company",
       installed_at: new Date().toISOString(),
     });
-    console.log(`[OAuth] SUCCESS: ${locationId}`);
+    console.log(`[OAuth] SUCCESS: ${locId} (type: ${locationId ? "location" : "company"})`);
     res.setHeader("Content-Type", "text/html");
     res.end(`<!DOCTYPE html><html><body style="font-family:Arial;max-width:600px;margin:60px auto;text-align:center">
       <h1 style="color:#0B6E4F">Installed!</h1>
-      <p>Location: <strong>${locationId}</strong></p>
-      <p>Next: <a href="/admin">Go to Admin Panel</a> to enter the Textbee credentials.</p>
+      <p>ID: <strong>${locId}</strong></p>
+      <p>Next: <a href="/admin">Go to Admin Panel</a> to enter Textbee credentials.</p>
       <p>Then: Settings > Phone System > Additional Settings > Telephony Provider > select SNBXSF SMS > Save.</p>
     </body></html>`);
   } catch (e) {

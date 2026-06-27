@@ -16,6 +16,7 @@ module.exports = async (req, res) => {
       }),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
+    console.log("[OAuth] GHL response:", JSON.stringify(r.data));
     const { access_token, refresh_token, expires_in, locationId } = r.data;
     await setLocation(locationId, {
       access_token, refresh_token, expires_in, locationId,

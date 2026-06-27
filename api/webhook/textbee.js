@@ -51,11 +51,11 @@ module.exports = async (req, res) => {
           continue;
         }
 
-        console.log(`[Inbound] Match found! Contact: ${contact.name || contact.id}, pushing to GHL...`);
-        await ghlApi("post",
-          "https://services.leadconnectorhq.com/conversations/messages/inbound",
-          { type: "SMS", contactId: contact.id, body: message, direction: "inbound", status: "delivered", from: sender, to: contact.phone },
-          loc.id);
+        console.log(`[Inbound] Sending to GHL - body: "${message}", contactId: ${contact.id}`);
+await ghlApi("post",
+  "https://services.leadconnectorhq.com/conversations/messages/inbound",
+  { type: "SMS", contactId: contact.id, message: message, direction: "inbound", status: "delivered", from: sender, to: contact.phone },
+  loc.id);
 
         console.log(`[Inbound] SUCCESS — Pushed to GHL for ${contact.name || contact.id}`);
         delivered = true;

@@ -34,8 +34,8 @@ module.exports = async (req, res) => {
       try {
         console.log(`[Inbound] Searching contact ${sender} in location ${loc.id}`);
         const searchRes = await ghlApi("get",
-          `https://services.leadconnectorhq.com/contacts/search?query=${encodeURIComponent(sender)}&locationId=${loc.id}`,
-          null, loc.id);
+  `https://services.leadconnectorhq.com/contacts/?query=${encodeURIComponent(sender)}&locationId=${loc.id}&limit=5`,
+  null, loc.id);
 
         const contacts = searchRes.data?.contacts || [];
         console.log(`[Inbound] Found ${contacts.length} contacts matching ${sender}`);

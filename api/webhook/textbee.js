@@ -4,6 +4,9 @@ const { ghlApi } = require("../../lib/ghl");
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
  
+  // LOG THE RAW PAYLOAD so we can see what Textbee actually sends
+  console.log("[Textbee Webhook] Raw payload:", JSON.stringify(req.body));
+  
   const { event, data } = req.body;
   if (event !== "MESSAGE_RECEIVED") return res.json({ success: true, skipped: true });
  
